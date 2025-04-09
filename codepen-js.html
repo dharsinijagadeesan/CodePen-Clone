@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<title>Code Sandbox</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="codepen-styles.css">
+        <link rel="icon" href="data:,">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+	</head>
+
+	<body>
+
+        <div class="container">
+            <div class="left">
+                <label for="html"><i class="fa-brands fa-html5"></i> HTML</label>
+		        <textarea id="html" spellcheck="false" autocorrect="off" autocapitalize="off" translate="no"></textarea>
+
+		        <label for="css"><i class="fa-brands fa-css3-alt"></i> CSS</label>
+		        <textarea id="css" spellcheck="false" autocorrect="off" autocapitalize="off" translate="no"></textarea>
+
+		        <label for="js"><i class="fa-brands fa-square-js"></i> JavaScript</label>
+		        <textarea id="js" spellcheck="false" autocorrect="off" autocapitalize="off" translate="no"></textarea>
+            </div>
+            <div class="right">
+                <div style="display: flex; justify-content: space-between; align-items: center; background-color: black;">
+                    <label><i class="fa-solid fa-play"></i> Output</label>
+                    <button id="fullscreen-toggle" style="background-color:rgb(0, 0, 0);cursor: pointer; border-style: none; color: white; padding-right: 10px; ">
+                        <i class="fa-solid fa-expand"></i>
+                    </button>
+                </div>
+                <iframe id="result"></iframe>
+                
+            </div>
+        </div>
+		
+
+		<script>
+			let html = document.querySelector('#html');
+			let css = document.querySelector('#css');
+			let js = document.querySelector('#js');
+			let result = document.querySelector('#result');
+			let debounce;
+
+			function updateIframe () {
+				let clone = result.cloneNode();
+				result.replaceWith(clone);
+				result = clone;
+
+				result.contentWindow.document.open();
+				result.contentWindow.document.writeln(
+					`${html.value}
+					<style>${css.value}</style>
+					<script type="module">${js.value}<\/script>`
+				);
+				result.contentWindow.document.close();
+
+			}
+
+			function inputHandler (event) {
+				if (
+					event.target !== html &&
+					event.target !== css &&
+					event.target !== js
+				) return;
+				clearTimeout(debounce);
+				debounce = setTimeout(updateIframe, 500);
+			}
+			document.addEventListener('input', inputHandler);
+
+            document.getElementById('fullscreen-toggle').addEventListener('click', () => {
+            const iframe = document.getElementById('result');
+            if (!document.fullscreenElement) {
+                iframe.requestFullscreen().catch(err => {
+                alert(`Error trying to enable full-screen mode: ${err.message}`);
+            });
+            } else {
+                document.exitFullscreen();
+            }
+            });
+
+		</script>
+	</body>
+</html>
